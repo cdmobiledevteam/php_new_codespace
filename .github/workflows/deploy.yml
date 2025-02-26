@@ -19,7 +19,7 @@ jobs:
           server: ${{ secrets.FTP_HOST }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          server-dir: /public_html/testsvg/  # Update this based on your hosting setup
+          server-dir: /  # Update this based on your hosting setup
           local-dir: ./  # Deploy all files from the repo
           exclude: |
             **/.git*
