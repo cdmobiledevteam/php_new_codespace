@@ -1,0 +1,30 @@
+name: Deploy to cPanel
+
+on:
+  push:
+    branches:
+      - main  # Change to your target branch
+
+jobs:
+  deploy:
+    name: Upload to cPanel
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.CPANEL_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.CPANEL_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Deploy via Rsync
+        run: |
+          rsync -avz --delete ./ ${{ secrets.CPANEL_USERNAME }}@${{ secrets.CPANEL_HOST }}:/home/${{ secrets.CPANEL_USERNAME }}/public_html/
+
+      - name: Clear Cache (Optional)
+        run: |
+          ssh ${{ secrets.CPANEL_USERNAME }}@${{ secrets.CPANEL_HOST }} 'php /home/${{ secrets.CPANEL_USERNAME }}/public_html/artisan cache:clear'
