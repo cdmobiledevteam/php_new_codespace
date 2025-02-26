@@ -1,4 +1,4 @@
-name: Auto Deploy to Hostinger
+name: Auto Deploy to Hostinger via FTP
 
 on:
   push:
@@ -13,13 +13,16 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Set up SSH Key
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.HOSTINGER_SSH_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H testsvg.globleinfotech.com >> ~/.ssh/known_hosts
-
-      - name: Deploy Files to Hostinger
-        run: |
-          rsync -avz --delete ./ root@testsvg.globleinfotech.com:/home/globlein/testsvg.globleinfotech.com/
+      - name: Deploy to Hostinger via FTP
+        uses: SamKirkland/FTP-Deploy-Action@4.3.0
+        with:
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          server-dir: /home/globlein/testsvg.globleinfotech.com/  # Updated target directory
+          local-dir: ./  # Deploy all files from the repo
+          exclude: |
+            **/.git*
+            **/.github*
+            **/README.md
+            **/.gitignore
