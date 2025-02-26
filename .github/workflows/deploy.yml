@@ -19,10 +19,11 @@ jobs:
           server: ${{ secrets.FTP_HOST }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          server-dir: /home/globlein/testsvg.globleinfotech.com/  # Updated target directory
+          server-dir: /public_html/testsvg/  # Update this based on your hosting setup
           local-dir: ./  # Deploy all files from the repo
           exclude: |
             **/.git*
             **/.github*
             **/README.md
             **/.gitignore
+          log-level: verbose  # Optional: Helps with debugging
