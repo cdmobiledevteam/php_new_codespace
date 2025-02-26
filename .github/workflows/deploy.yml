@@ -1,30 +1,25 @@
-name: Deploy to cPanel
+name: Auto Deploy to Hostinger
 
 on:
   push:
     branches:
-      - main  # Change to your target branch
+      - main  # Change branch if needed
 
 jobs:
   deploy:
-    name: Upload to cPanel
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Setup SSH
+      - name: Set up SSH Key
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.CPANEL_SSH_KEY }}" > ~/.ssh/id_rsa
+          echo "${{ secrets.HOSTINGER_SSH_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H ${{ secrets.CPANEL_HOST }} >> ~/.ssh/known_hosts
+          ssh-keyscan -H testsvg.globleinfotech.com >> ~/.ssh/known_hosts
 
-      - name: Deploy via Rsync
+      - name: Deploy Files to Hostinger
         run: |
-          rsync -avz --delete ./ ${{ secrets.CPANEL_USERNAME }}@${{ secrets.CPANEL_HOST }}:/home/${{ secrets.CPANEL_USERNAME }}/public_html/
-
-      - name: Clear Cache (Optional)
-        run: |
-          ssh ${{ secrets.CPANEL_USERNAME }}@${{ secrets.CPANEL_HOST }} 'php /home/${{ secrets.CPANEL_USERNAME }}/public_html/artisan cache:clear'
+          rsync -avz --delete ./ root@testsvg.globleinfotech.com:/home/globlein/testsvg.globleinfotech.com/
